@@ -96,8 +96,8 @@ const confirmImport = async () => {
 
     if (data.markedDays) store.markedDays = new Set(data.markedDays)
     if (data.selectedMunicipalityId !== undefined) store.selectedMunicipalityId = data.selectedMunicipalityId
-    if (data.maxVacationDays) store.maxVacationDays = data.maxVacationDays
-    if (data.carryOverDays) store.carryOverDays = data.carryOverDays
+    if (data.maxVacationDays !== undefined) store.maxVacationDays = data.maxVacationDays
+    if (data.carryOverDays !== undefined) store.carryOverDays = data.carryOverDays
     if (data.year) store.year = data.year
     if (data.theme) store.theme = data.theme
     if (data.locale) store.locale = data.locale

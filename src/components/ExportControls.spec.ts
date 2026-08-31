@@ -99,6 +99,40 @@ describe('ExportControls modal and toast flows', () => {
     expect(store.theme).toBe('dark')
     expect(wrapper.text()).toContain('Importação concluída!')
   })
+  it('imports zero-valued vacation settings', async () => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const store = useConfigStore()
+    store.maxVacationDays = 24
+    store.carryOverDays = 3
+
+    vi.mocked(importFromJSON).mockResolvedValue({
+      markedDays: [],
+      maxVacationDays: 0,
+      carryOverDays: 0
+    })
+
+    const wrapper = mount(ExportControls, {
+      global: { plugins: [pinia, i18n] }
+    })
+
+    await wrapper.find('button').trigger('click')
+    await findButtonByText(wrapper, 'Importar Dados')!.trigger('click')
+
+    const fileInput = wrapper.find('input[type="file"]')
+    const file = new File(['{}'], 'backup.json', { type: 'application/json' })
+    Object.defineProperty(fileInput.element, 'files', {
+      value: [file],
+      configurable: true
+    })
+    await fileInput.trigger('change')
+    await findButtonByText(wrapper, 'Confirmar')!.trigger('click')
+    await flushPromises()
+
+    expect(store.maxVacationDays).toBe(0)
+    expect(store.carryOverDays).toBe(0)
+  })
+
 
   it('cancels import without calling parser and keeps confirm closed', async () => {
     const pinia = createPinia()
